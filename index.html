@@ -6,6 +6,30 @@
   <link rel="stylesheet" href="dist/style.css">
 </head>
 <body>
-  <h1>Checkbox All Utility</h1>
+  <main>
+    <h1>Checkbox All Utility</h1>
+    <form method="get" action="/">
+      <!-- Fieldset 1: Color -->
+      <fieldset>
+        <legend>Color</legend>
+        <label><input type="checkbox" name="color[]" value="All"> All</label>
+        <label><input type="checkbox" name="color[]" value="A"> A</label>
+        <label><input type="checkbox" name="color[]" value="B"> B</label>
+        <label><input type="checkbox" name="color[]" value="C"> C</label>
+      </fieldset>
+
+      <!-- Fieldset 2: Size -->
+      <fieldset>
+        <legend>Size</legend>
+        <label><input type="checkbox" name="size[]" value="All"> All</label>
+        <label><input type="checkbox" name="size[]" value="X"> X</label>
+        <label><input type="checkbox" name="size[]" value="Y"> Y</label>
+        <label><input type="checkbox" name="size[]" value="Z"> Z</label>
+      </fieldset>
+    <input type="submit" value="Submit">
+    </form>
+  </main>
+
+  <script src="dist/script.js"></script>
 </body>
 </html>

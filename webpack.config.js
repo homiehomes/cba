@@ -30,7 +30,7 @@ module.exports = (env, argv) => {
 
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: "[name].js",
+      filename: isProduction ? "[name].min.js" : "[name].js",
       chunkFilename: "[name].js?ver=[chunkhash]",
       publicPath: "/",
       clean: true,
@@ -95,16 +95,12 @@ module.exports = (env, argv) => {
           ],
         },
 
-        {
-          test: /\.(png|jpe?g|gif|webp|svg)$/i,
-          type: "asset/resource",
-        },
       ],
     },
 
     plugins: [
       new MiniCssExtractPlugin({
-        filename: "[name].css",
+        filename: isProduction ? "[name].min.css" : "[name].css",
         chunkFilename: "[id].css",
       }),
 

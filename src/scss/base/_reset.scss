@@ -1,6 +1,4 @@
-/*!*******************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].use[3]!./src/scss/main.scss ***!
-  \*******************************************************************************************************************************************************************************************************************************************/
+
 /* Box sizing rules */
 *,
 *::before,
@@ -22,8 +20,8 @@ figure, blockquote, dl, dd {
 }
 
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
-ul[role=list],
-ol[role=list] {
+ul[role='list'],
+ol[role='list'] {
   list-style: none;
 }
 
@@ -47,8 +45,7 @@ h3, h4 {
 
 /* A elements that don't have a class get default styles */
 a:not([class]) {
-  -webkit-text-decoration-skip: ink;
-          text-decoration-skip-ink: auto;
+  text-decoration-skip-ink: auto;
   color: currentColor;
 }
 
@@ -76,37 +73,3 @@ textarea:not([rows]) {
   scroll-margin-block: 5ex;
 }
 
-body {
-  font-family: sans-serif;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-}
-
-input[type=submit] {
-  background-color: darkcyan;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-input[type=submit]:hover {
-  background-color: teal;
-}
-
-form {
-  padding: 1em;
-}
-
-fieldset {
-  border: 1px solid #ccc;
-  margin-bottom: 1em;
-  padding: 1em;
-}
-
-main {
-  padding: 1em;
-}
-
-/*# sourceMappingURL=style.css.map*/

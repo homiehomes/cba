@@ -37,17 +37,18 @@ class cba {
     this.settings = Object.assign(
       {
         debug: false,
-        fieldset: fieldset
+        fieldset: fieldset,
+        select: 'all'
       },
       opts
     );
 
     // Select checkboxes
     this.masterCheckbox = document.querySelector(
-      `input[name="${this.settings.fieldset}[]"][value="All"]`
+      `input[name="${this.settings.fieldset}[]"][value="${this.settings.select}"]`
     );
     this.allCheckboxes = document.querySelectorAll(
-      `input[name="${this.settings.fieldset}[]"]:not([value="All"])`
+      `input[name="${this.settings.fieldset}[]"]:not([value="${this.settings.select}"])`
     );
 
     if (!this.masterCheckbox) {
@@ -108,8 +109,8 @@ class cba {
 
   // 🔹 Auto-detect method
   static initAll(opts = {}) {
-    document.querySelectorAll('input[value="All"]').forEach(master => {
-      const fieldsetName = master.getAttribute("name").replace("[]", "");
+    document.querySelectorAll(`input[value="${opts.select || 'All'}"]`).forEach(master => {
+      const fieldsetName = master.getAttribute("name").replace("[]", "");      
       new cba(fieldsetName, opts);
     });
   }
