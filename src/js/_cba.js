@@ -116,4 +116,10 @@ class cba {
   }
 }
 
+
+// Attach to window for UMD/global usage
+if (typeof window !== 'undefined') {
+  window.cba = cba;
+}
+
 export { cba };

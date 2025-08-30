@@ -3,13 +3,14 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const cssnano = require("cssnano");
 const autoprefixer = require("autoprefixer");
 const BrowserSyncPlugin = require("browser-sync-webpack-plugin");
+const { library } = require("webpack");
 
 const combinedEntryFiles = () => {
 
   // Original entry files loaded
   const mainFiles = {
     style: "./src/scss/main.scss",
-    script: "./src/js/script.js",
+    cba: "./src/js/_cba.js",
   };
 
   // combine/flatten into One obj
@@ -34,6 +35,9 @@ module.exports = (env, argv) => {
       chunkFilename: "[name].js?ver=[chunkhash]",
       publicPath: "/",
       clean: true,
+      library: ['cba','[name]'],
+      libraryTarget: 'umd',
+      // globalObject: 'this', // for UMD compatibility
     },
 
     resolve: {

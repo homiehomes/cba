@@ -3,12 +3,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkbox All Utility</title>
-  <link rel="stylesheet" href="dist/style.css">
+  <link rel="stylesheet" href="dist/style.min.css">
 </head>
 <body>
   <main>
     <h1>Checkbox All Utility</h1>
-    <form method="get" action="/">
+    <form method="get" action="">
       <!-- Fieldset 1: Color -->
       <fieldset>
         <legend>Color</legend>
@@ -30,6 +30,13 @@
     </form>
   </main>
 
-  <script src="dist/script.js"></script>
+  <script src="dist/cba.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      cba.initAll({
+        select: 'All'
+      });
+    });
+  </script>
 </body>
 </html>
