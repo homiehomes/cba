@@ -1,6 +1,7 @@
 {
   "name": "@homiehomes/cba",
   "version": "1.0.0",
+  "author": "Homero Cavazos <homerocavazos@gmail.com> (https://homiehomes.dev)",
   "description": "A lightweight JavaScript helper for managing checkbox groups. Allows a single \"All\" checkbox to toggle the state of all other checkboxes within a specified fieldset.",
   "repository": {
     "type": "git",
@@ -12,7 +13,6 @@
     "build": "webpack --mode production",
     "start": "npm run dev"
   },
-  "author": "Homero Cavazos",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/homiehomes/cba/issues"
