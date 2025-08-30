@@ -3,6 +3,8 @@
  * Version: 1.0.0
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
+ * License: MIT
+ * Website: https://homiehomes.dev
  *
  * Description:
  * A lightweight JavaScript helper for managing checkbox groups. 
@@ -10,6 +12,13 @@
  * checkboxes within a specified fieldset.
  *
  * Usage:
+ *
+ *   // HTML
+ *
+ *   <input name="group1[]" value="All" type="checkbox"> All
+ *   <input name="group1[]" value="Option 1" type="checkbox"> Option 1
+ *   <input name="group1[]" value="Option 2" type="checkbox"> Option 2
+ * 
  *   // Explicit per fieldset
  *   new cba('type');
  *   new cba('labor-type');
@@ -38,17 +47,17 @@ class cba {
       {
         debug: false,
         fieldset: fieldset,
-        select: 'all'
+        selectAllValue: 'all'
       },
       opts
     );
 
     // Select checkboxes
     this.masterCheckbox = document.querySelector(
-      `input[name="${this.settings.fieldset}[]"][value="${this.settings.select}"]`
+      `input[name="${this.settings.fieldset}[]"][value="${this.settings.selectAllValue}"]`
     );
     this.allCheckboxes = document.querySelectorAll(
-      `input[name="${this.settings.fieldset}[]"]:not([value="${this.settings.select}"])`
+      `input[name="${this.settings.fieldset}[]"]:not([value="${this.settings.selectAllValue}"])`
     );
 
     if (!this.masterCheckbox) {
@@ -58,6 +67,14 @@ class cba {
       return;
     }
 
+    // Event Listeners
+    this.allCheckedEvent = new CustomEvent('cba:allChecked', {
+      detail: {
+        fieldset: this.settings.fieldset,
+        checkboxes: this.allCheckboxes
+      }
+    });
+
     // Auto-init
     this.init();
   }
@@ -66,8 +83,17 @@ class cba {
     Object.assign(this.settings, opts);
   }
 
+
+  areAllCheckboxesChecked() {
+    return [...this.allCheckboxes].every(cb => cb.checked);
+  }
+
   toggleAllCheckboxes(checked) {
     this.allCheckboxes.forEach(cb => (cb.checked = checked));
+
+    if (this.areAllCheckboxesChecked()) {
+      this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
+    }
   }
 
   updateAllCheckboxes() {
@@ -82,6 +108,9 @@ class cba {
       this.masterCheckbox.checked = true;
       this.masterCheckbox.indeterminate = false;
       this.masterCheckbox.classList.remove("indeterminate");
+      // Dispatch custom event when all are checked
+      this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
+
     } else {
       this.masterCheckbox.checked = false;
       this.masterCheckbox.indeterminate = true;
@@ -91,8 +120,8 @@ class cba {
 
   init() {
     if (this.settings.debug) {
-        console.log(`cba: Initialized for fieldset "${this.settings.fieldset}".`);
-      }
+      console.log(`cba: Initialized for fieldset "${this.settings.fieldset}".`);
+    }
     // Master checkbox toggles group
     this.masterCheckbox.addEventListener("change", () => {
       this.toggleAllCheckboxes(this.masterCheckbox.checked);
@@ -110,7 +139,7 @@ class cba {
   // 🔹 Auto-detect method
   static initAll(opts = {}) {
     document.querySelectorAll(`input[value="${opts.select || 'All'}"]`).forEach(master => {
-      const fieldsetName = master.getAttribute("name").replace("[]", "");      
+      const fieldsetName = master.getAttribute("name").replace("[]", "");
       new cba(fieldsetName, opts);
     });
   }
