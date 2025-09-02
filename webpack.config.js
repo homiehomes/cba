@@ -8,7 +8,7 @@ const combinedEntryFiles = () => {
   };
 
   // combine/flatten into One obj
-  const entryFiles = { ...mainFiles}
+  const entryFiles = { ...mainFiles }
   console.log('Entry Files = ', entryFiles);
 
   return entryFiles;
@@ -30,7 +30,7 @@ module.exports = (env, argv) => {
       publicPath: "/",
       clean: true,
       library: {
-        name: ['cba','[name]'],
+        name: ['cba', '[name]'],
         type: 'umd',
       },
     },
