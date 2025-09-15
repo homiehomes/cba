@@ -1,6 +1,6 @@
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.0
+ * Version: 1.0.5
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
@@ -29,6 +29,19 @@
  *   // Initialize with custom options
  *   new cba('type', { debug: true });
  *
+ *   // Event Listeners
+ *.  // When all are checked
+ *   document.querySelector('input[name="group1[]"][value="all"]')
+ *       .addEventListener('cba:allChecked', (e) => {
+ *           console.log('All checked for:', e.detail.fieldset);
+ *       });
+ *
+ *   // When count of checked changes
+ *   document.querySelector('input[name="group1[]"]')
+ *       .addEventListener('cba:countChecked', (e) => {
+ *           console.log('Count checked for:', e.detail.checkedCount);
+ *       });
+ * 
  * Notes:
  * - Expects a checkbox with value="All" in each group.
  * - Other checkboxes must share the same name with [] notation.
@@ -74,6 +87,7 @@ class cba {
         checkboxes: this.allCheckboxes
       }
     });
+    // Note: countCheckedEvent is now created dynamically in updateAllCheckboxes with the current count
 
     // Auto-init
     this.init();
@@ -110,11 +124,19 @@ class cba {
       this.masterCheckbox.classList.remove("indeterminate");
       // Dispatch custom event when all are checked
       this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
-
     } else {
       this.masterCheckbox.checked = false;
       this.masterCheckbox.indeterminate = true;
       this.masterCheckbox.classList.add("indeterminate");
+      // Dispatch custom event with current checked count
+      this.masterCheckbox.dispatchEvent(
+        new CustomEvent('cba:countChecked', {
+          detail: {
+            fieldset: this.settings.fieldset,
+            checkedCount: checkedCount
+          }
+        })
+      );
     }
   }
 

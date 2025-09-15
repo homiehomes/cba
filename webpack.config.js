@@ -18,33 +18,16 @@ const combinedEntryFiles = () => {
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
 
-  return {
+  const baseConfig = {
     mode: isProduction ? "production" : "development",
-
     entry: combinedEntryFiles(),
-
-    output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: isProduction ? "[name].min.js" : "[name].js",
-      chunkFilename: "[name].js?ver=[chunkhash]",
-      publicPath: "/",
-      clean: true,
-      library: {
-        name: ['cba', '[name]'],
-        type: 'umd',
-      },
-    },
-
     resolve: {
       extensions: [".js"],
     },
-
     devtool: isProduction ? false : "source-map",
-
     performance: {
       hints: false,
     },
-
     module: {
       rules: [
         {
@@ -57,8 +40,44 @@ module.exports = (env, argv) => {
             },
           },
         },
-
       ],
     },
   };
+
+  // UMD build (for global, CommonJS, AMD)
+  const umdConfig = {
+    ...baseConfig,
+    output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: isProduction ? "[name].umd.min.js" : "[name].umd.js",
+      chunkFilename: "[name].js?ver=[chunkhash]",
+      publicPath: "/",
+      clean: false,
+      library: {
+        name: ['cba', '[name]'],
+        type: 'umd',
+      },
+    },
+  };
+
+  // ES module build (for modern import)
+  const esmConfig = {
+    ...baseConfig,
+    output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: isProduction ? "[name].min.js" : "[name].js",
+      chunkFilename: "[name].js?ver=[chunkhash]",
+      publicPath: "/",
+      clean: false, // Only clean on UMD build to avoid deleting ESM output
+      library: {
+        type: 'module',
+      },
+      module: true,
+    },
+    experiments: {
+      outputModule: true,
+    },
+  };
+
+  return [umdConfig, esmConfig];
 };

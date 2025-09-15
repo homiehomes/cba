@@ -1,6 +1,6 @@
 {
   "name": "@homiehomes/cba",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "author": "Homero Cavazos <homerocavazos@gmail.com> (https://homiehomes.dev)",
   "description": "A lightweight JavaScript helper for managing checkbox groups. Allows a single \"All\" checkbox to toggle the state of all other checkboxes within a specified fieldset.",
   "main": "dist/cba.min.js",
@@ -10,8 +10,8 @@
   },
   "homepage": "https://github.com/homiehomes/cba#readme",
   "scripts": {
-    "dev": "webpack --watch --mode development",
-    "build": "webpack --mode production",
+    "dev": "npx webpack --watch --mode development --config webpack.config.js",
+    "build": "npx webpack --mode production --config webpack.config.js",
     "start": "npm run dev"
   },
   "license": "ISC",
