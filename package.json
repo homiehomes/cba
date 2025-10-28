@@ -1,6 +1,6 @@
 {
   "name": "@homiehomes/cba",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": "Homero Cavazos <homerocavazos@gmail.com> (https://homiehomes.dev)",
   "description": "A lightweight JavaScript helper for managing checkbox groups. Allows a single \"All\" checkbox to toggle the state of all other checkboxes within a specified fieldset.",
   "main": "dist/cba.min.js",

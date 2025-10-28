@@ -1,6 +1,6 @@
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
@@ -55,12 +55,13 @@ class cba {
       throw new Error("cba: You must provide a fieldset name.");
     }
 
+
     // Settings
     this.settings = Object.assign(
       {
         debug: false,
         fieldset: fieldset,
-        selectAllValue: 'all'
+        selectAllValue: 'all',
       },
       opts
     );
@@ -80,11 +81,14 @@ class cba {
       return;
     }
 
+
     // Event Listeners
     this.allCheckedEvent = new CustomEvent('cba:allChecked', {
       detail: {
         fieldset: this.settings.fieldset,
-        checkboxes: this.allCheckboxes
+        checkboxes: this.allCheckboxes,
+        count: this.allCheckboxes.length,
+        values: [...this.allCheckboxes].map(cb => cb.value) || []
       }
     });
     // Note: countCheckedEvent is now created dynamically in updateAllCheckboxes with the current count
@@ -107,17 +111,37 @@ class cba {
 
     if (this.areAllCheckboxesChecked()) {
       this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
+    } else {
+      this.masterCheckbox.dispatchEvent(
+        new CustomEvent('cba:countChecked', {
+          detail: {
+            fieldset: this.settings.fieldset,
+            count: 0,
+            values: []
+          }
+        })
+      );
     }
   }
 
   updateAllCheckboxes() {
     const checkedCount = [...this.allCheckboxes].filter(cb => cb.checked).length;
+    const checkedValue = [...this.allCheckboxes].filter(cb => cb.checked);
     const totalCount = this.allCheckboxes.length;
 
     if (checkedCount === 0) {
       this.masterCheckbox.checked = false;
       this.masterCheckbox.indeterminate = false;
       this.masterCheckbox.classList.remove("indeterminate");
+      this.masterCheckbox.dispatchEvent(
+        new CustomEvent('cba:countChecked', {
+          detail: {
+            fieldset: this.settings.fieldset,
+            count: 0,
+            values: []
+          }
+        })
+      );
     } else if (checkedCount === totalCount) {
       this.masterCheckbox.checked = true;
       this.masterCheckbox.indeterminate = false;
@@ -133,7 +157,8 @@ class cba {
         new CustomEvent('cba:countChecked', {
           detail: {
             fieldset: this.settings.fieldset,
-            checkedCount: checkedCount
+            count: checkedCount,
+            values: checkedValue.map(cb => cb.value)
           }
         })
       );

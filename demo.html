@@ -1,0 +1,146 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        form {
+            input {
+                margin: 10px;
+            }
+        }
+
+        .note {
+            display: block;
+            padding: 1rem;
+            font-size: 0.9em;
+            color: #333;
+            font-weight: 600;
+            background-color: lightblue;
+            font-style: italic;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Checkbox All (CBA) Demo</h1>
+    <p>This demo showcases the Checkbox All (CBA) utility for managing checkbox groups. You can use this file as a
+        starting point for your own implementations. The basic setup involves including the CBA script and initializing
+        it with your checkbox groups.</p>
+    <span class="note">Use dev tools "Console" to see the CBA in action.</span>
+    <form action="">
+        <fieldset id="group1">
+            <legend>Group 1 <span class="count"></span></legend>
+            <p>Select your options:</p>
+            <input type="checkbox" name="group1[]" value="all">Select All<br>
+            <input type="checkbox" name="group1[]" value="Option1">Option 1<br>
+            <input type="checkbox" name="group1[]" value="Option2">Option 2<br>
+            <input type="checkbox" name="group1[]" value="Option3">Option 3<br>
+            <input type="checkbox" name="group1[]" value="Option4">Option 4<br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Initialization Script</h2>
+
+    <code>
+        &lt;script type="module"&gt;<br>
+        &nbsp;&nbsp;import { cba } from './dist/cba.js';<br><br>
+
+        &nbsp;&nbsp;new cba('group1');<br>
+        &lt;/script&gt;
+    </code>
+
+    <h2>Checkbox Group</h2>
+    <p>The 'group1' refers to the collection of checkboxes within the first fieldset.</p>
+
+    <code>
+        &lt;input type="checkbox" name="group1[]" value="all"&gt;Select All&lt;br&gt;
+    </code>
+    <p><strong>cba</strong> looks for <code>value="all"</code> by default but you may specify your own
+        "Select All"
+        checkbox by changing the value attribute.</p>
+
+    <pre>
+<code>
+    &lt;input type="checkbox" name="group1[]" value="select-all"&gt;Option 1&lt;br&gt;
+    &lt;input type="checkbox" name="group1[]" value="Option1"&gt;Option 1&lt;br&gt;
+    &lt;input type="checkbox" name="group1[]" value="Option2"&gt;Option 2&lt;br&gt;
+    &lt;input type="checkbox" name="group1[]" value="Option3"&gt;Option 3&lt;br&gt;
+</code>
+</pre>
+
+    <code>
+    &lt;script type="module"&gt;<br>
+    &nbsp;&nbsp;import { cba } from './dist/cba.js';<br><br>
+
+    &nbsp;&nbsp;new cba('group1', { selectAllValue: 'select-all' });<br>
+    &lt;/script&gt;
+</code>
+
+    <h2>Event Listeners</h2>
+    <p>
+        <strong>CBA</strong> does not update the DOM with counts or other UI elements, but you can easily
+        implement this functionality by listening to the following events:
+    </p>
+    <ul>
+        <li>cba:allChecked</li>
+        <li>cba:countChecked</li>
+    </ul>
+    <p><strong>Example of listening for the <code>cba:allChecked</code> event:</strong></p>
+    <p>Dispatch event that all checkboxes are checked:</p>
+    <pre>
+<code>
+    document.querySelector('input[name="group1[]"][value="all"]').addEventListener('cba:allChecked', (e) =&gt; {
+        console.log('Total checked for:', e.detail.count);
+    });
+</code>
+</pre>
+    <p><strong>Example of listening for the <code>cba:countChecked</code> event:</strong></p>
+    <p>Dispatch event that count of checked boxes has changed:</p>
+    <pre>
+<code>
+    document.querySelector('input[name="group1[]"]').addEventListener('cba:countChecked', (e) =&gt; {
+        console.log('Count checked for:', e.detail.count);
+    });
+</code>
+</pre>
+    <p>These events provide details about the fieldset and the count of checked boxes.</p>
+</body>
+
+<script type="module">
+    import { cba } from './dist/cba.js';
+
+    new cba('group1');
+
+    const counter = document.querySelector('.count');
+
+    // Listen for allChecked event to update the counter
+    document
+        .querySelector('input[name="group1[]"][value="all"]')
+        .addEventListener('cba:allChecked', (e) => {
+            console.log('Total checked for:', e.detail.count);
+            console.log('Checked values:', e.detail.values);
+            counter.textContent = ` (${e.detail.count})`;
+        });
+
+    // Listen for countChecked event to update the counter
+    document
+        .querySelector('input[name="group1[]"]')
+        .addEventListener('cba:countChecked', (e) => {
+            console.log('Count checked for:', e.detail.count);
+            console.log('Checked values:', e.detail.values);
+            counter.textContent = ` (${e.detail.count})`;
+        });
+</script>
+</body>
+
+</html>
