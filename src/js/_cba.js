@@ -1,6 +1,6 @@
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.8
+ * Version: 1.0.9
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
@@ -119,6 +119,7 @@ class cba {
       }
     });
   }
+
   areAllCheckboxesChecked() {
     return [...this.allCheckboxes].every((cb) => cb.checked);
   }
@@ -151,7 +152,15 @@ class cba {
     let checkedLabels;
 
     if (this.settings.associatedLabels === true) {
-      checkedLabels = this.getLabels();
+      checkedLabels = checked.map((cb) => {
+        const parent = cb.parentElement;
+        if (parent.tagName.toLowerCase() === "label") {
+          return parent.textContent.trim();
+        } else {
+          const label = document.querySelector(`label[for="${cb.id}"]`);
+          return label ? label.textContent.trim() : "";
+        }
+      });
     }
 
     if (checkedCount === 0) {

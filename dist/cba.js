@@ -41,7 +41,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.8
+ * Version: 1.0.9
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
@@ -208,7 +208,15 @@ var cba = /*#__PURE__*/function () {
       var totalCount = this.allCheckboxes.length;
       var checkedLabels;
       if (this.settings.associatedLabels === true) {
-        checkedLabels = this.getLabels();
+        checkedLabels = checked.map(function (cb) {
+          var parent = cb.parentElement;
+          if (parent.tagName.toLowerCase() === "label") {
+            return parent.textContent.trim();
+          } else {
+            var label = document.querySelector("label[for=\"".concat(cb.id, "\"]"));
+            return label ? label.textContent.trim() : "";
+          }
+        });
       }
       if (checkedCount === 0) {
         this.masterCheckbox.checked = false;
