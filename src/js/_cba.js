@@ -1,14 +1,14 @@
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.6
+ * Version: 1.0.7
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
  * Website: https://homiehomes.dev
  *
  * Description:
- * A lightweight JavaScript helper for managing checkbox groups. 
- * Allows a single "All" checkbox to toggle the state of all other 
+ * A lightweight JavaScript helper for managing checkbox groups.
+ * Allows a single "All" checkbox to toggle the state of all other
  * checkboxes within a specified fieldset.
  *
  * Usage:
@@ -18,11 +18,11 @@
  *   <input name="group1[]" value="All" type="checkbox"> All
  *   <input name="group1[]" value="Option 1" type="checkbox"> Option 1
  *   <input name="group1[]" value="Option 2" type="checkbox"> Option 2
- * 
+ *
  *   // Explicit per fieldset
  *   new cba('type');
  *   new cba('labor-type');
- *   
+ *
  *   // Auto-detect all groups
  *   cba.initAll();
  *
@@ -41,7 +41,7 @@
  *       .addEventListener('cba:countChecked', (e) => {
  *           console.log('Count checked for:', e.detail.checkedCount);
  *       });
- * 
+ *
  * Notes:
  * - Expects a checkbox with value="All" in each group.
  * - Other checkboxes must share the same name with [] notation.
@@ -55,13 +55,13 @@ class cba {
       throw new Error("cba: You must provide a fieldset name.");
     }
 
-
     // Settings
     this.settings = Object.assign(
       {
         debug: false,
         fieldset: fieldset,
-        selectAllValue: 'all',
+        selectAllValue: "all",
+        associatedLabels: false,
       },
       opts
     );
@@ -76,20 +76,21 @@ class cba {
 
     if (!this.masterCheckbox) {
       if (this.settings.debug) {
-        console.warn(`cba: No "All" checkbox found for fieldset "${fieldset}".`);
+        console.warn(
+          `cba: No "All" checkbox found for fieldset "${fieldset}".`
+        );
       }
       return;
     }
 
-
     // Event Listeners
-    this.allCheckedEvent = new CustomEvent('cba:allChecked', {
+    this.allCheckedEvent = new CustomEvent("cba:allChecked", {
       detail: {
         fieldset: this.settings.fieldset,
         checkboxes: this.allCheckboxes,
         count: this.allCheckboxes.length,
-        values: [...this.allCheckboxes].map(cb => cb.value) || []
-      }
+        values: [...this.allCheckboxes].map((cb) => cb.value) || [],
+      },
     });
     // Note: countCheckedEvent is now created dynamically in updateAllCheckboxes with the current count
 
@@ -101,45 +102,61 @@ class cba {
     Object.assign(this.settings, opts);
   }
 
-
   areAllCheckboxesChecked() {
-    return [...this.allCheckboxes].every(cb => cb.checked);
+    return [...this.allCheckboxes].every((cb) => cb.checked);
   }
 
   toggleAllCheckboxes(checked) {
-    this.allCheckboxes.forEach(cb => (cb.checked = checked));
+    this.allCheckboxes.forEach((cb) => (cb.checked = checked));
 
     if (this.areAllCheckboxesChecked()) {
       this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
     } else {
       this.masterCheckbox.dispatchEvent(
-        new CustomEvent('cba:countChecked', {
+        new CustomEvent("cba:countChecked", {
           detail: {
             fieldset: this.settings.fieldset,
             count: 0,
-            values: []
-          }
+            values: [],
+            labels: [],
+          },
         })
       );
     }
   }
 
   updateAllCheckboxes() {
-    const checkedCount = [...this.allCheckboxes].filter(cb => cb.checked).length;
-    const checkedValue = [...this.allCheckboxes].filter(cb => cb.checked);
+    const checked = Array.from(this.allCheckboxes).filter((cb) => cb.checked);
+    const checkedCount = checked.length;
+    const checkedValues = checked.map((cb) => cb.value);
     const totalCount = this.allCheckboxes.length;
+
+    let checkedLabels;
+
+    if (this.settings.associatedLabels === true) {
+      checkedLabels = checked.map((cb) => {
+        const parent = cb.parentElement;
+        if (parent.tagName.toLowerCase() === "label") {
+          return parent.textContent.trim();
+        } else {
+          const label = document.querySelector(`label[for="${cb.id}"]`);
+          return label ? label.textContent.trim() : "";
+        }
+      });
+    }
 
     if (checkedCount === 0) {
       this.masterCheckbox.checked = false;
       this.masterCheckbox.indeterminate = false;
       this.masterCheckbox.classList.remove("indeterminate");
       this.masterCheckbox.dispatchEvent(
-        new CustomEvent('cba:countChecked', {
+        new CustomEvent("cba:countChecked", {
           detail: {
             fieldset: this.settings.fieldset,
             count: 0,
-            values: []
-          }
+            values: [],
+            ...(this.settings.associatedLabels === true ? { labels: [] } : {}),
+          },
         })
       );
     } else if (checkedCount === totalCount) {
@@ -154,12 +171,15 @@ class cba {
       this.masterCheckbox.classList.add("indeterminate");
       // Dispatch custom event with current checked count
       this.masterCheckbox.dispatchEvent(
-        new CustomEvent('cba:countChecked', {
+        new CustomEvent("cba:countChecked", {
           detail: {
             fieldset: this.settings.fieldset,
             count: checkedCount,
-            values: checkedValue.map(cb => cb.value)
-          }
+            values: checkedValues,
+            ...(this.settings.associatedLabels === true
+              ? { labels: checkedLabels }
+              : {}),
+          },
         })
       );
     }
@@ -175,7 +195,7 @@ class cba {
     });
 
     // Group checkboxes update master state
-    this.allCheckboxes.forEach(cb => {
+    this.allCheckboxes.forEach((cb) => {
       cb.addEventListener("change", () => this.updateAllCheckboxes());
     });
 
@@ -185,16 +205,17 @@ class cba {
 
   // 🔹 Auto-detect method
   static initAll(opts = {}) {
-    document.querySelectorAll(`input[value="${opts.select || 'All'}"]`).forEach(master => {
-      const fieldsetName = master.getAttribute("name").replace("[]", "");
-      new cba(fieldsetName, opts);
-    });
+    document
+      .querySelectorAll(`input[value="${opts.select || "All"}"]`)
+      .forEach((master) => {
+        const fieldsetName = master.getAttribute("name").replace("[]", "");
+        new cba(fieldsetName, opts);
+      });
   }
 }
 
-
 // Attach to window for UMD/global usage
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.cba = cba;
 }
 

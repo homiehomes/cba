@@ -37,13 +37,42 @@
     <span class="note">Use dev tools "Console" to see the CBA in action.</span>
     <form action="">
         <fieldset id="group1">
-            <legend>Group 1 <span class="count"></span></legend>
+            <legend>Group 1 - Explicit Association using for and id attributes<span class="count"></span></legend>
             <p>Select your options:</p>
-            <input type="checkbox" name="group1[]" value="all">Select All<br>
-            <input type="checkbox" name="group1[]" value="Option1">Option 1<br>
-            <input type="checkbox" name="group1[]" value="Option2">Option 2<br>
-            <input type="checkbox" name="group1[]" value="Option3">Option 3<br>
-            <input type="checkbox" name="group1[]" value="Option4">Option 4<br>
+
+            <input type="checkbox" id="selectAll" name="group1[]" value="all">
+            <label for="selectAll">Select All</label>
+            <br>
+            <input type="checkbox" id="option1" name="group1[]" value="option1">
+            <label for="option1">Option 1</label>
+            <br>
+            <input type="checkbox" id="option2" name="group1[]" value="option2">
+            <label for="option2">Option 2</label>
+            <br>
+            <input type="checkbox" id="option3" name="group1[]" value="option3">
+            <label for="option3">Option 3</label>
+            <br>
+            <input type="checkbox" id="option4" name="group1[]" value="option4">
+            <label for="option4">Option 4</label>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+    <form action="">
+        <fieldset id="group2">
+            <legend>Group 2 - Implicit Association by Wrapping the Checkbox within the Label<span class="count"></span></legend>
+            <p>Select your options:</p>
+
+            
+            <label><input type="checkbox" name="group2[]" value="all"> Select All</label>
+            <br>
+            <label><input type="checkbox" name="group2[]" value="option1"> Option 1</label>
+            <br>
+            <label><input type="checkbox" name="group2[]" value="option2"> Option 2</label>
+            <br>
+            <label><input type="checkbox" name="group2[]" value="option3"> Option 3</label>
+            <br>
+            <label><input type="checkbox" name="group2[]" value="option4"> Option 4</label>
         </fieldset>
 
         <input type="submit" value="Submit">
@@ -119,7 +148,12 @@
 <script type="module">
     import { cba } from './dist/cba.js';
 
-    new cba('group1');
+    new cba('group1', {
+        associatedLabels: true
+    });
+    new cba('group2', {
+        associatedLabels: true
+    });
 
     const counter = document.querySelector('.count');
 
@@ -127,8 +161,8 @@
     document
         .querySelector('input[name="group1[]"][value="all"]')
         .addEventListener('cba:allChecked', (e) => {
-            console.log('Total checked for:', e.detail.count);
-            console.log('Checked values:', e.detail.values);
+            console.log('g1 Total checked for:', e.detail.count);
+            console.log('g1 Checked values:', e.detail.values);
             counter.textContent = ` (${e.detail.count})`;
         });
 
@@ -136,8 +170,27 @@
     document
         .querySelector('input[name="group1[]"]')
         .addEventListener('cba:countChecked', (e) => {
-            console.log('Count checked for:', e.detail.count);
-            console.log('Checked values:', e.detail.values);
+            console.log('g1 Count:', e.detail.count);
+            console.log('g1 Checked values:', e.detail.values);
+            console.log('g1 Checked labels:', e.detail.labels);
+            counter.textContent = ` (${e.detail.count})`;
+        });
+    // Listen for allChecked event to update the counter
+    document
+        .querySelector('input[name="group2[]"][value="all"]')
+        .addEventListener('cba:allChecked', (e) => {
+            console.log('g2 Total:', e.detail.count);
+            console.log('g2 Checked values:', e.detail.values);
+            counter.textContent = ` (${e.detail.count})`;
+        });
+
+    // Listen for countChecked event to update the counter
+    document
+        .querySelector('input[name="group2[]"]')
+        .addEventListener('cba:countChecked', (e) => {
+            console.log('g2 Count:', e.detail.count);
+            console.log('g2 Checked values:', e.detail.values);
+            console.log('g2 Checked labels:', e.detail.labels);
             counter.textContent = ` (${e.detail.count})`;
         });
 </script>
