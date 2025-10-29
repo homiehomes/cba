@@ -41,7 +41,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.6
+ * Version: 1.0.8
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
@@ -79,7 +79,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  *   // When count of checked changes
  *   document.querySelector('input[name="group1[]"]')
- *       .addEventListener('cba:countChecked', (e) => {
+ *       .addEventListener('cba:checkedDetails', (e) => {
  *           console.log('Count checked for:', e.detail.checkedCount);
  *       });
  *
@@ -91,15 +91,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -124,6 +124,7 @@ var cba = /*#__PURE__*/function () {
     // Select checkboxes
     this.masterCheckbox = document.querySelector("input[name=\"".concat(this.settings.fieldset, "[]\"][value=\"").concat(this.settings.selectAllValue, "\"]"));
     this.allCheckboxes = document.querySelectorAll("input[name=\"".concat(this.settings.fieldset, "[]\"]:not([value=\"").concat(this.settings.selectAllValue, "\"])"));
+    var allLabels = this.settings.associatedLabels === true ? this.getLabels() : undefined;
     if (!this.masterCheckbox) {
       if (this.settings.debug) {
         console.warn("cba: No \"All\" checkbox found for fieldset \"".concat(fieldset, "\"."));
@@ -133,14 +134,16 @@ var cba = /*#__PURE__*/function () {
 
     // Event Listeners
     this.allCheckedEvent = new CustomEvent("cba:allChecked", {
-      detail: {
+      detail: _objectSpread({
         fieldset: this.settings.fieldset,
         checkboxes: this.allCheckboxes,
         count: this.allCheckboxes.length,
         values: _toConsumableArray(this.allCheckboxes).map(function (cb) {
           return cb.value;
         }) || []
-      }
+      }, this.settings.associatedLabels === true ? {
+        labels: allLabels
+      } : {})
     });
     // Note: countCheckedEvent is now created dynamically in updateAllCheckboxes with the current count
 
@@ -152,6 +155,19 @@ var cba = /*#__PURE__*/function () {
     value: function setOpts() {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       Object.assign(this.settings, opts);
+    }
+  }, {
+    key: "getLabels",
+    value: function getLabels() {
+      return Array.from(this.allCheckboxes).map(function (cb) {
+        var parent = cb.parentElement;
+        if (parent.tagName.toLowerCase() === "label") {
+          return parent.textContent.trim();
+        } else {
+          var label = document.querySelector("label[for=\"".concat(cb.id, "\"]"));
+          return label ? label.textContent.trim() : "";
+        }
+      });
     }
   }, {
     key: "areAllCheckboxesChecked",
@@ -169,7 +185,7 @@ var cba = /*#__PURE__*/function () {
       if (this.areAllCheckboxesChecked()) {
         this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
       } else {
-        this.masterCheckbox.dispatchEvent(new CustomEvent("cba:countChecked", {
+        this.masterCheckbox.dispatchEvent(new CustomEvent("cba:checkedDetails", {
           detail: {
             fieldset: this.settings.fieldset,
             count: 0,
@@ -192,21 +208,13 @@ var cba = /*#__PURE__*/function () {
       var totalCount = this.allCheckboxes.length;
       var checkedLabels;
       if (this.settings.associatedLabels === true) {
-        checkedLabels = checked.map(function (cb) {
-          var parent = cb.parentElement;
-          if (parent.tagName.toLowerCase() === "label") {
-            return parent.textContent.trim();
-          } else {
-            var label = document.querySelector("label[for=\"".concat(cb.id, "\"]"));
-            return label ? label.textContent.trim() : "";
-          }
-        });
+        checkedLabels = this.getLabels();
       }
       if (checkedCount === 0) {
         this.masterCheckbox.checked = false;
         this.masterCheckbox.indeterminate = false;
         this.masterCheckbox.classList.remove("indeterminate");
-        this.masterCheckbox.dispatchEvent(new CustomEvent("cba:countChecked", {
+        this.masterCheckbox.dispatchEvent(new CustomEvent("cba:checkedDetails", {
           detail: _objectSpread({
             fieldset: this.settings.fieldset,
             count: 0,
@@ -226,7 +234,7 @@ var cba = /*#__PURE__*/function () {
         this.masterCheckbox.indeterminate = true;
         this.masterCheckbox.classList.add("indeterminate");
         // Dispatch custom event with current checked count
-        this.masterCheckbox.dispatchEvent(new CustomEvent("cba:countChecked", {
+        this.masterCheckbox.dispatchEvent(new CustomEvent("cba:checkedDetails", {
           detail: _objectSpread({
             fieldset: this.settings.fieldset,
             count: checkedCount,

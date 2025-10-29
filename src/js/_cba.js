@@ -1,6 +1,6 @@
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
@@ -38,7 +38,7 @@
  *
  *   // When count of checked changes
  *   document.querySelector('input[name="group1[]"]')
- *       .addEventListener('cba:countChecked', (e) => {
+ *       .addEventListener('cba:checkedDetails', (e) => {
  *           console.log('Count checked for:', e.detail.checkedCount);
  *       });
  *
@@ -74,6 +74,9 @@ class cba {
       `input[name="${this.settings.fieldset}[]"]:not([value="${this.settings.selectAllValue}"])`
     );
 
+    const allLabels =
+      this.settings.associatedLabels === true ? this.getLabels() : undefined;
+
     if (!this.masterCheckbox) {
       if (this.settings.debug) {
         console.warn(
@@ -90,6 +93,9 @@ class cba {
         checkboxes: this.allCheckboxes,
         count: this.allCheckboxes.length,
         values: [...this.allCheckboxes].map((cb) => cb.value) || [],
+        ...(this.settings.associatedLabels === true
+          ? { labels: allLabels }
+          : {}),
       },
     });
     // Note: countCheckedEvent is now created dynamically in updateAllCheckboxes with the current count
@@ -102,6 +108,17 @@ class cba {
     Object.assign(this.settings, opts);
   }
 
+  getLabels() {
+    return Array.from(this.allCheckboxes).map((cb) => {
+      const parent = cb.parentElement;
+      if (parent.tagName.toLowerCase() === "label") {
+        return parent.textContent.trim();
+      } else {
+        const label = document.querySelector(`label[for="${cb.id}"]`);
+        return label ? label.textContent.trim() : "";
+      }
+    });
+  }
   areAllCheckboxesChecked() {
     return [...this.allCheckboxes].every((cb) => cb.checked);
   }
@@ -113,7 +130,7 @@ class cba {
       this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
     } else {
       this.masterCheckbox.dispatchEvent(
-        new CustomEvent("cba:countChecked", {
+        new CustomEvent("cba:checkedDetails", {
           detail: {
             fieldset: this.settings.fieldset,
             count: 0,
@@ -134,15 +151,7 @@ class cba {
     let checkedLabels;
 
     if (this.settings.associatedLabels === true) {
-      checkedLabels = checked.map((cb) => {
-        const parent = cb.parentElement;
-        if (parent.tagName.toLowerCase() === "label") {
-          return parent.textContent.trim();
-        } else {
-          const label = document.querySelector(`label[for="${cb.id}"]`);
-          return label ? label.textContent.trim() : "";
-        }
-      });
+      checkedLabels = this.getLabels();
     }
 
     if (checkedCount === 0) {
@@ -150,7 +159,7 @@ class cba {
       this.masterCheckbox.indeterminate = false;
       this.masterCheckbox.classList.remove("indeterminate");
       this.masterCheckbox.dispatchEvent(
-        new CustomEvent("cba:countChecked", {
+        new CustomEvent("cba:checkedDetails", {
           detail: {
             fieldset: this.settings.fieldset,
             count: 0,
@@ -171,7 +180,7 @@ class cba {
       this.masterCheckbox.classList.add("indeterminate");
       // Dispatch custom event with current checked count
       this.masterCheckbox.dispatchEvent(
-        new CustomEvent("cba:countChecked", {
+        new CustomEvent("cba:checkedDetails", {
           detail: {
             fieldset: this.settings.fieldset,
             count: checkedCount,

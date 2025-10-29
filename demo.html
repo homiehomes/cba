@@ -122,7 +122,7 @@
     </p>
     <ul>
         <li>cba:allChecked</li>
-        <li>cba:countChecked</li>
+        <li>cba:checkedDetails</li>
     </ul>
     <p>Return data</p>
     <ul>
@@ -139,11 +139,11 @@
     });
 </code>
 </pre>
-    <p><strong>Example of listening for the <code>cba:countChecked</code> event:</strong></p>
+    <p><strong>Example of listening for the <code>cba:checkedDetails</code> event:</strong></p>
     <p>Dispatch event that count of checked boxes has changed:</p>
     <pre>
 <code>
-    document.querySelector('input[name="group1[]"]').addEventListener('cba:countChecked', (e) =&gt; {
+    document.querySelector('input[name="group1[]"]').addEventListener('cba:checkedDetails', (e) =&gt; {
         console.log('Count:', e.detail.count);
         console.log('Checked values:', e.detail.values);
         console.log('Checked labels:', e.detail.labels);
@@ -172,13 +172,14 @@
         .addEventListener('cba:allChecked', (e) => {
             console.log('g1 Total checked for:', e.detail.count);
             console.log('g1 Checked values:', e.detail.values);
+            console.log('g1 Checked labels:', e.detail.labels);
             counter.textContent = ` (${e.detail.count})`;
         });
 
     // Listen for countChecked event to update the counter
     document
         .querySelector('input[name="group1[]"]')
-        .addEventListener('cba:countChecked', (e) => {
+        .addEventListener('cba:checkedDetails', (e) => {
             console.log('g1 Count:', e.detail.count);
             console.log('g1 Checked values:', e.detail.values);
             console.log('g1 Checked labels:', e.detail.labels);
@@ -196,7 +197,7 @@
     // Listen for countChecked event to update the counter
     document
         .querySelector('input[name="group2[]"]')
-        .addEventListener('cba:countChecked', (e) => {
+        .addEventListener('cba:checkedDetails', (e) => {
             console.log('g2 Count:', e.detail.count);
             console.log('g2 Checked values:', e.detail.values);
             console.log('g2 Checked labels:', e.detail.labels);
