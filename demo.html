@@ -60,7 +60,7 @@
     </form>
     <form action="">
         <fieldset id="group2">
-            <legend>Group 2 - Implicit Association by Wrapping the Checkbox within the Label<span class="count"></span></legend>
+            <legend>Group 2 - Implicit Association by Wrapping the Checkbox within the Label<span class="count2"></span></legend>
             <p>Select your options:</p>
 
             
@@ -124,6 +124,12 @@
         <li>cba:allChecked</li>
         <li>cba:countChecked</li>
     </ul>
+    <p>Return data</p>
+    <ul>
+        <li><strong>fieldset</strong>: The fieldset element containing the checkbox group.</li>
+        <li><strong>count</strong>: The total number of checkboxes that are currently checked.</li>
+        <li><strong>values</strong>: An array of values of the checked checkboxes.</li>
+        <li><strong>labels</strong>: (if associatedLabels is true) An array of labels corresponding to the checked checkboxes.</li>
     <p><strong>Example of listening for the <code>cba:allChecked</code> event:</strong></p>
     <p>Dispatch event that all checkboxes are checked:</p>
     <pre>
@@ -138,7 +144,9 @@
     <pre>
 <code>
     document.querySelector('input[name="group1[]"]').addEventListener('cba:countChecked', (e) =&gt; {
-        console.log('Count checked for:', e.detail.count);
+        console.log('Count:', e.detail.count);
+        console.log('Checked values:', e.detail.values);
+        console.log('Checked labels:', e.detail.labels);
     });
 </code>
 </pre>
@@ -156,6 +164,7 @@
     });
 
     const counter = document.querySelector('.count');
+    const counter2 = document.querySelector('.count2');
 
     // Listen for allChecked event to update the counter
     document
@@ -181,7 +190,7 @@
         .addEventListener('cba:allChecked', (e) => {
             console.log('g2 Total:', e.detail.count);
             console.log('g2 Checked values:', e.detail.values);
-            counter.textContent = ` (${e.detail.count})`;
+            counter2.textContent = ` (${e.detail.count})`;
         });
 
     // Listen for countChecked event to update the counter
@@ -191,7 +200,7 @@
             console.log('g2 Count:', e.detail.count);
             console.log('g2 Checked values:', e.detail.values);
             console.log('g2 Checked labels:', e.detail.labels);
-            counter.textContent = ` (${e.detail.count})`;
+            counter2.textContent = ` (${e.detail.count})`;
         });
 </script>
 </body>
