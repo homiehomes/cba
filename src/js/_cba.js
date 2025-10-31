@@ -1,6 +1,6 @@
 /*!
  * cba.js – Checkbox All Utility
- * Version: 1.0.9
+ * Version: 1.1.0
  * Author: Homero Cavazos
  * GitHub: https://github.com/homiehomes
  * License: MIT
@@ -147,7 +147,7 @@ class cba {
     const checked = Array.from(this.allCheckboxes).filter((cb) => cb.checked);
     const checkedCount = checked.length;
     const checkedValues = checked.map((cb) => cb.value);
-    const totalCount = this.allCheckboxes.length;
+    const totalCheckboxes = this.allCheckboxes.length;
 
     let checkedLabels;
 
@@ -177,7 +177,7 @@ class cba {
           },
         })
       );
-    } else if (checkedCount === totalCount) {
+    } else if (checkedCount === totalCheckboxes) {
       this.masterCheckbox.checked = true;
       this.masterCheckbox.indeterminate = false;
       this.masterCheckbox.classList.remove("indeterminate");
@@ -217,8 +217,55 @@ class cba {
       cb.addEventListener("change", () => this.updateAllCheckboxes());
     });
 
-    // Initialize correct state
+    // Initialize correct state and dispatch initial events
     this.updateAllCheckboxes();
+
+    // Dispatch initial checked state events after a short delay to ensure event listeners are ready
+    setTimeout(() => {
+      this.dispatchInitialState();
+    }, 0);
+  }
+
+  dispatchInitialState() {
+    const checked = Array.from(this.allCheckboxes).filter((cb) => cb.checked);
+    const checkedCount = checked.length;
+    const totalCheckboxes = this.allCheckboxes.length;
+
+    if (checkedCount > 0) {
+      if (checkedCount === totalCheckboxes) {
+        // All checkboxes are checked on load
+        this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
+      } else {
+        // Some checkboxes are checked on load
+        const checkedValues = checked.map((cb) => cb.value);
+        let checkedLabels;
+
+        if (this.settings.associatedLabels === true) {
+          checkedLabels = checked.map((cb) => {
+            const parent = cb.parentElement;
+            if (parent.tagName.toLowerCase() === "label") {
+              return parent.textContent.trim();
+            } else {
+              const label = document.querySelector(`label[for="${cb.id}"]`);
+              return label ? label.textContent.trim() : "";
+            }
+          });
+        }
+
+        this.masterCheckbox.dispatchEvent(
+          new CustomEvent("cba:checkedDetails", {
+            detail: {
+              fieldset: this.settings.fieldset,
+              count: checkedCount,
+              values: checkedValues,
+              ...(this.settings.associatedLabels === true
+                ? { labels: checkedLabels }
+                : {}),
+            },
+          })
+        );
+      }
+    }
   }
 
   // 🔹 Auto-detect method

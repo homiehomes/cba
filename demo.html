@@ -46,7 +46,7 @@
             <input type="checkbox" id="option1" name="group1[]" value="option1">
             <label for="option1">Option 1</label>
             <br>
-            <input type="checkbox" id="option2" name="group1[]" value="option2">
+            <input type="checkbox" id="option2" name="group1[]" value="option2" checked>
             <label for="option2">Option 2</label>
             <br>
             <input type="checkbox" id="option3" name="group1[]" value="option3">
@@ -66,11 +66,11 @@
             
             <label><input type="checkbox" name="group2[]" value="all"> Select All</label>
             <br>
-            <label><input type="checkbox" name="group2[]" value="option1"> Option 1</label>
+            <label><input type="checkbox" name="group2[]" value="option1" checked> Option 1</label>
             <br>
             <label><input type="checkbox" name="group2[]" value="option2"> Option 2</label>
             <br>
-            <label><input type="checkbox" name="group2[]" value="option3"> Option 3</label>
+            <label><input type="checkbox" name="group2[]" value="option3" checked> Option 3</label>
             <br>
             <label><input type="checkbox" name="group2[]" value="option4"> Option 4</label>
         </fieldset>
@@ -170,17 +170,17 @@
     document
         .querySelector('input[name="group1[]"][value="all"]')
         .addEventListener('cba:allChecked', (e) => {
-            console.log('g1 Total checked for:', e.detail.count);
+            console.log('g1 All checked! Total:', e.detail.count);
             console.log('g1 Checked values:', e.detail.values);
             console.log('g1 Checked labels:', e.detail.labels);
             counter.textContent = ` (${e.detail.count})`;
         });
 
-    // Listen for countChecked event to update the counter
+    // Listen for checkedDetails event to update the counter (including initial load)
     document
         .querySelector('input[name="group1[]"]')
         .addEventListener('cba:checkedDetails', (e) => {
-            console.log('g1 Count:', e.detail.count);
+            console.log('g1 Checked details - Count:', e.detail.count);
             console.log('g1 Checked values:', e.detail.values);
             console.log('g1 Checked labels:', e.detail.labels);
             counter.textContent = ` (${e.detail.count})`;

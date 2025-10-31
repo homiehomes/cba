@@ -205,7 +205,7 @@ var cba = /*#__PURE__*/function () {
       var checkedValues = checked.map(function (cb) {
         return cb.value;
       });
-      var totalCount = this.allCheckboxes.length;
+      var totalCheckboxes = this.allCheckboxes.length;
       var checkedLabels;
       if (this.settings.associatedLabels === true) {
         checkedLabels = checked.map(function (cb) {
@@ -231,7 +231,7 @@ var cba = /*#__PURE__*/function () {
             labels: []
           } : {})
         }));
-      } else if (checkedCount === totalCount) {
+      } else if (checkedCount === totalCheckboxes) {
         this.masterCheckbox.checked = true;
         this.masterCheckbox.indeterminate = false;
         this.masterCheckbox.classList.remove("indeterminate");
@@ -272,8 +272,54 @@ var cba = /*#__PURE__*/function () {
         });
       });
 
-      // Initialize correct state
+      // Initialize correct state and dispatch initial events
       this.updateAllCheckboxes();
+
+      // Dispatch initial checked state events after a short delay to ensure event listeners are ready
+      setTimeout(function () {
+        _this.dispatchInitialState();
+      }, 0);
+    }
+  }, {
+    key: "dispatchInitialState",
+    value: function dispatchInitialState() {
+      var checked = Array.from(this.allCheckboxes).filter(function (cb) {
+        return cb.checked;
+      });
+      var checkedCount = checked.length;
+      var totalCheckboxes = this.allCheckboxes.length;
+      if (checkedCount > 0) {
+        if (checkedCount === totalCheckboxes) {
+          // All checkboxes are checked on load
+          this.masterCheckbox.dispatchEvent(this.allCheckedEvent);
+        } else {
+          // Some checkboxes are checked on load
+          var checkedValues = checked.map(function (cb) {
+            return cb.value;
+          });
+          var checkedLabels;
+          if (this.settings.associatedLabels === true) {
+            checkedLabels = checked.map(function (cb) {
+              var parent = cb.parentElement;
+              if (parent.tagName.toLowerCase() === "label") {
+                return parent.textContent.trim();
+              } else {
+                var label = document.querySelector("label[for=\"".concat(cb.id, "\"]"));
+                return label ? label.textContent.trim() : "";
+              }
+            });
+          }
+          this.masterCheckbox.dispatchEvent(new CustomEvent("cba:checkedDetails", {
+            detail: _objectSpread({
+              fieldset: this.settings.fieldset,
+              count: checkedCount,
+              values: checkedValues
+            }, this.settings.associatedLabels === true ? {
+              labels: checkedLabels
+            } : {})
+          }));
+        }
+      }
     }
 
     // 🔹 Auto-detect method
